@@ -1,0 +1,31 @@
+version: '2.1'
+services:
+
+    webapp:
+        build: ./services/webapp
+        networks:
+            - production
+        environment:
+            NODE_ENV: production
+            LOG_LEVEL: ${LOG_LEVEL:-info}
+            SSR_PORT: ${SSR_PORT:-8080}
+            SSR_BUILD: ${SSR_BUILD:-/usr/src/app/build}
+            SSR_ROOT: ${SSR_ROOT:-/usr/src/app/src}
+        restart: always
+
+    proxy:
+        build: ./services/nginx-proxy
+        networks:
+            - production
+        ports:
+            - ${PROXY_PORT:-8080}:80
+        environment:
+            NGINX_UPSTREAM_SERVER: webapp
+            NGINX_UPSTREAM_PORT: 8080
+            NGINX_STATIC_FILES_ROOT: "/usr/src/app/build/"
+        volumes_from:
+            - webapp
+        restart: always
+
+networks:
+    production:

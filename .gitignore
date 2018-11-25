@@ -1,0 +1,8 @@
+# Environment Files
+!.env
+.env.*
+
+# Data Folders
+node_modules
+data
+
